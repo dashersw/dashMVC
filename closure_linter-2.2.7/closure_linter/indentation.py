@@ -327,8 +327,8 @@ class IndentationRules(object):
       # Handle normal additive indentation tokens.
       if not token_info.overridden_by and token.string != 'return':
         if token_info.is_block:
-          expected = self._AddToEach(expected, 2)
-          hard_stops = self._AddToEach(hard_stops, 2)
+          expected = self._AddToEach(expected, 4)
+          hard_stops = self._AddToEach(hard_stops, 4)
           in_same_continuation = False
         elif in_same_continuation:
           expected |= self._AddToEach(expected, 4)
