@@ -1,0 +1,3 @@
+This project implements the famous example from "Why MVC is not an application architecture" presentation from Sebastian Priebsch in Javascript.
+
+Besides having implemented a basic MVC pattern in Javascript, this project is also a good example application developed using the Google Closure Library. It's fully Closure-standards compliant both in JSDoc and in style, therefore is very easy to read, efficient after compilation (with ADVANCED_OPTIMIZATIONS on) and is much more, with respect to a common Javascript project.
