@@ -11,23 +11,23 @@
 goog.require('dashMVC');
 goog.provide('app2');
 
-var view1 = new dashMVC.View();
-var view2 = new dashMVC.View();
-var model = new dashMVC.Model();
-var controller1 = new dashMVC.Controller(model);
-var controller2 = new dashMVC.Controller(model);
+var bview1 = new dashMVC.View();
+var bview2 = new dashMVC.View();
+var bmodel = new dashMVC.Model();
+var bcontroller1 = new dashMVC.Controller(bmodel);
+var bcontroller2 = new dashMVC.Controller(bmodel);
 
-view1.attach(controller1);
-view2.attach(controller2);
+bview1.attach(bcontroller1);
+bview2.attach(bcontroller2);
 
-model.attach(view1);
-model.attach(view2);
+bmodel.attach(bview1);
+bmodel.attach(bview2);
 
-model.setX(42);
-console.log(view1.getData(), view2.getData());
+bmodel.setX(42);
+console.log(bview1.getData(), bview2.getData());
 
-view1.click();
-console.log(view1.getData(), view2.getData());
+bview1.click();
+console.log(bview1.getData(), bview2.getData());
 
-view2.click();
-console.log(view1.getData(), view2.getData());
+bview2.click();
+console.log(bview1.getData(), bview2.getData());

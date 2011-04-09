@@ -1,20 +1,22 @@
 dashMVC$Controller:e
-model:s
-goog$array$indexOf:i
-L 5:h
-L 4:n
+goog$array$indexOf:h
+L 5:i
+L 4:q
+amodel:v
+bcontroller2:s
+aview:u
 dashMVC$View:m
 goog$inherits:d
 goog$array$insert:k
-view1:p
 JSCompiler_StaticMethods_notify:f
-view2:q
+bmodel:r
+bview1:o
+bview2:p
 goog$array$ARRAY_PROTOTYPE_:g
-controller2:t
 L 0:a
 L 1:b
 L 2:c
 dashMVC$Subject:l
-L 3:r
-dashMVC$Model:o
+L 3:t
+dashMVC$Model:n
 goog$array$forEach:j
