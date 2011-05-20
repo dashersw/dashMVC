@@ -7,29 +7,28 @@
 /**
  * @fileoverview The Controller class.
  */
-
-goog.provide('dashMVC.Controller');
-goog.require('dashMVC.IObserver');
+goog.require('app1');
+goog.provide('app1.BusController');
 
 
 
 /**
  * @constructor
- * @implements {dashMVC.IObserver}
- * @param {dashMVC.Model} model Model that this controller will operate on.
+ * @extends {dashMVC.Controller}
+ * @param {app1.Bus} model Model that this controller will operate on.
  */
-dashMVC.Controller = function(model) {
+app1.BusController = function(model) {
     /**
-     * @type {dashMVC.Model}
      * @protected
      */
     this.model = model;
 };
-
+goog.inherits(app1.BusController, dashMVC.Controller);
 
 /**
  *
  * @param {dashMVC.ISubject} subject subject to get data.
  */
-dashMVC.Controller.prototype.update = function(subject) {
+app1.BusController.prototype.update = function(subject) {
+    this.model.setX(subject.getData() + 1);
 };

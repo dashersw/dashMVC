@@ -9,7 +9,7 @@
  */
 
 goog.require('dashMVC');
-goog.provide('app1');
+goog.provide('app12');
 
 var aview = new dashMVC.View();
 var amodel = new dashMVC.Model();

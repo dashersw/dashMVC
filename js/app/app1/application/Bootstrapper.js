@@ -5,18 +5,7 @@
  */
 
 /**
- * @fileoverview The Model class.
+ * @fileoverview The View class.
  */
-goog.provide('dashMVC.Model');
-goog.require('dashMVC.Subject');
-
-
-
-/**
- * @extends {dashMVC.Subject}
- * @constructor
- */
-dashMVC.Model = function() {
-    goog.base(this);
-};
-goog.inherits(dashMVC.Model, dashMVC.Subject);
+goog.require('dashMVC');
+goog.provide('app1');

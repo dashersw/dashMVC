@@ -19,31 +19,8 @@ goog.require('dashMVC.Subject');
  */
 dashMVC.View = function() {
     goog.base(this);
-    /**
-     * @type {*}
-     * @protected
-     */
-    this.data;
 };
 goog.inherits(dashMVC.View, dashMVC.Subject);
-
-
-/**
- *
- * @param {*} data Data.
- */
-dashMVC.View.prototype.setData = function(data) {
-    this.data = data;
-};
-
-
-/**
- *
- * @return {*} data Data.
- */
-dashMVC.View.prototype.getData = function() {
-    return this.data;
-};
 
 
 /**
@@ -51,13 +28,4 @@ dashMVC.View.prototype.getData = function() {
  * @param {dashMVC.ISubject} subject Subject.
  */
 dashMVC.View.prototype.update = function(subject) {
-    this.data = subject.getX();
-};
-
-
-/**
- * Click function that notifies the observers.
- */
-dashMVC.View.prototype.click = function() {
-    this.notify();
 };
