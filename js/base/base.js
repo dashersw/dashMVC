@@ -12,4 +12,6 @@
 goog.require('dashMVC.Controller');
 goog.require('dashMVC.Model');
 goog.require('dashMVC.View');
+goog.require('dashMVC.uriRouter');
+
 goog.provide('dashMVC');

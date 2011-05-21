@@ -12,6 +12,8 @@ goog.require('app1.BusView');
 goog.require('app1.BusController');
 goog.provide('appCode');
 
+var x = new dashMVC.uriRouter();
+
 var aview = new app1.BusView();
 var amodel = new app1.Bus();
 var acontroller = new app1.BusController(amodel);

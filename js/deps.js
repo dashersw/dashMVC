@@ -13,4 +13,5 @@ goog.addDependency('../../base/ISubject.js', ['dashMVC.ISubject'], []);
 goog.addDependency('../../base/Model.js', ['dashMVC.Model'], ['dashMVC.Subject']);
 goog.addDependency('../../base/Subject.js', ['dashMVC.Subject'], ['dashMVC.ISubject', 'goog.array']);
 goog.addDependency('../../base/View.js', ['dashMVC.View'], ['dashMVC.Subject']);
-goog.addDependency('../../base/base.js', ['dashMVC'], ['dashMVC.Controller', 'dashMVC.Model', 'dashMVC.View']);
+goog.addDependency('../../base/base.js', ['dashMVC'], ['dashMVC.Controller', 'dashMVC.Model', 'dashMVC.View', 'dashMVC.uriRouter']);
+goog.addDependency('../../base/uriRouter.js', ['dashMVC.uriRouter'], ['goog.Uri']);
