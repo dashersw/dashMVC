@@ -5,7 +5,8 @@
 
 goog.provide('dashMVC.uriRouter');
 
-goog.require('goog.Uri');
+goog.require('goog.array');
+goog.require('goog.object');
 goog.require('dashMVC.Request');
 
 dashMVC.uriRouter.init = function(uri) {
@@ -15,35 +16,36 @@ dashMVC.uriRouter.init = function(uri) {
 }
 
 dashMVC.uriRouter.process = function(request) {
-    var fragments = goog.array.clone(request.fragments),
-        scheme = fragments[0];
+    dashMVC.uriRouter.resolveAliases(request);
+    dashMVC.uriRouter.resolveScheme(request);
 
-    // Resolve aliases
-    if (dashMVC.uriRouter.aliases[scheme]) {
-        var alias = dashMVC.uriRouter.aliases[scheme];
-        scheme = alias.controller;
-        fragments = [alias.controller, alias.action];
+    console.log(request, dashMVC.uriRouter.getController(), dashMVC.uriRouter.getAction(),
+        dashMVC.uriRouter.getParams());
+};
 
-        var response = request.path.match(alias.matcher);
-        if (response.length > 0) {
+dashMVC.uriRouter.resolveAliases = function(request) {
+    var response, scheme;
+    goog.array.some(dashMVC.uriRouter.aliases, function(alias, i, arr) {
+        if (response = request.path.match(alias.format)) {
+            scheme = dashMVC.uriRouter.getScheme(alias.schemeName);
+            var fragments = [alias.schemeName, alias.schemeAction];
             for (var i = 0; i < response.length - 1; i++) {
                 fragments.push(alias.params[i], response[i + 1]);
             }
+            request.fragments = fragments;
+            return true;
         }
-    }
+        return false;
+    });
+}
 
-    // Resolve current scheme
-    dashMVC.uriRouter.findScheme(scheme);
+dashMVC.uriRouter.resolveScheme = function(request) {
+    var fragments = goog.array.clone(request.fragments);
 
+    dashMVC.uriRouter.currentScheme = dashMVC.uriRouter.schemes[fragments[0]] || dashMVC.uriRouter.schemes.def;
     dashMVC.uriRouter.setController_(fragments.shift());
     dashMVC.uriRouter.setAction_(fragments.shift());
     dashMVC.uriRouter.setParams_(fragments);
-
-    console.log(dashMVC.uriRouter.getController(), dashMVC.uriRouter.getAction(), dashMVC.uriRouter.getParams());
-};
-
-dashMVC.uriRouter.findScheme = function(scheme) {
-    dashMVC.uriRouter.currentScheme = dashMVC.uriRouter.schemes[scheme] || dashMVC.uriRouter.schemes.def;
 }
 
 dashMVC.uriRouter.setController_ = function(controller) {
@@ -86,34 +88,32 @@ dashMVC.uriRouter.getParams = function() {
     return dashMVC.uriRouter.params_;
 }
 
-dashMVC.uriRouter.addScheme = function(schemeName, scheme) {
-    dashMVC.uriRouter.schemes[schemeName] = scheme;
+dashMVC.uriRouter.addScheme = function(scheme) {
+    dashMVC.uriRouter.schemes[scheme.name] = scheme;
 }
 
-dashMVC.uriRouter.addAlias = function(aliasName, format, scheme) {
-    var alias = {};
+dashMVC.uriRouter.addAlias = function(alias) {
+    var format = '^' + alias.format + '\/*$',
+        fields = format.match(/(:\w+)/g);
 
-    alias.params = [];
-    var fields = format.match(/(:\w+)/g);
-    for (var i = 0, l = fields.length; i < l; i++) {
-        alias.params.push(fields[i].substr(1));
-        format = format.replace(fields[i], '([^?#\/]+)');
+    if (fields) {
+        alias.params = [];
+        format = format.replace(/(:\w+)/g, '([^?#\/]+)');
+        for (var i = 0, l = fields.length; i < l; i++) {
+            alias.params.push(fields[i].substr(1));
+        }
     }
-
     format = format.replace(/\//g, '\\/');
-    alias.matcher = new RegExp(format);
+    alias.format = new RegExp(format);
 
-    alias.controller = scheme.controller;
-    alias.action = scheme.action;
-
-    dashMVC.uriRouter.aliases[aliasName] = alias;
+    dashMVC.uriRouter.aliases.push(alias);
 }
 
 var defaultController = 'default c', defaultAction = 'default a';
 var controller1 = 'resolved c1', action1 = 'resolved a1', action2 = 'resolved a2',
     controller2 = 'resolved c2', action3 = 'resolved a3', action4 = 'resolved a4';
 
-dashMVC.uriRouter.aliases = {};
+dashMVC.uriRouter.aliases = [];
 dashMVC.uriRouter.schemes = {
     def: {
         controller: defaultController,
@@ -127,22 +127,41 @@ dashMVC.uriRouter.getScheme = function(name) {
     return dashMVC.uriRouter.schemes[name];
 }
 
-dashMVC.uriRouter.addScheme('controller1',
-    {
-        controller: controller1,
-        actions: {
-            'action1': action1,
-            'action2': action2
-        }
-    });
+dashMVC.uriRouter.addScheme({
+    name: 'controller1',
+    controller: controller1,
+    actions: {
+        'action1': action1,
+        'action2': action2
+    }
+});
 
-dashMVC.uriRouter.addScheme('controller2',
-    {
-        controller: controller2,
-        actions: {
-            'action1': action3,
-            'action2': action4
-        }
-    });
+dashMVC.uriRouter.addScheme({
+    name: 'controller2',
+    controller: controller2,
+    actions: {
+        'action3': action3,
+        'action4': action4
+    }
+});
 
-dashMVC.uriRouter.addAlias('ahmet', 'ahmet/:param1/:param2', { controller: 'controller1', action: 'action3' });
+dashMVC.uriRouter.addAlias({
+    name: 'ahmet',
+    format: 'ahmet/:param1/:param2',
+    schemeName: 'controller1',
+    schemeAction: 'action2'
+});
+
+dashMVC.uriRouter.addAlias({
+    name: 'ahmet2',
+    format: 'ahmet/:param21',
+    schemeName: 'controller2',
+    schemeAction: 'action4'
+});
+
+dashMVC.uriRouter.addAlias({
+    name: 'ahmet3',
+    format: 'ahmet',
+    schemeName: 'controller1',
+    schemeAction: 'action1'
+});
