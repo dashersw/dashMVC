@@ -6,6 +6,8 @@
 goog.provide('dashMVC.Request');
 goog.require('goog.Uri');
 
+
+
 /**
  * Represents a request made to the application, storing its controller, action and parameters.
  * @constructor
@@ -25,6 +27,4 @@ dashMVC.Request = function(uri) {
     this.fragments = goog.array.filter(this.fragments, function(el, i, arr) {
         return (el != '')
     });
-
-    delete this.fragment;
 };

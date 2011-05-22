@@ -4,26 +4,36 @@
 // @author Armagan Amcalar <armagan@tart.com.tr>
 
 goog.provide('dashMVC.uriRouter');
-
+goog.require('dashMVC.Request');
 goog.require('goog.array');
 goog.require('goog.object');
-goog.require('dashMVC.Request');
 
+
+
+/**
+ * UriRouter singleton. It is responsible for routing the incoming request to appropriate controller and actions
+ * with appropriate parameters.
+ * The application routes and aliases are added to the uriRouter and every time the URI
+ * changes, it routes the request to the appropriate controller/action.
+ * @param {string} uri The URI to parse.
+ */
 dashMVC.uriRouter.init = function(uri) {
     dashMVC.uriRouter.request = new dashMVC.Request(uri || window.location);
 
-    dashMVC.uriRouter.process(dashMVC.uriRouter.request);
+    dashMVC.uriRouter.resolveAliases_(dashMVC.uriRouter.request);
+    dashMVC.uriRouter.process_(dashMVC.uriRouter.request);
+
+    console.log(dashMVC.uriRouter.getController(), dashMVC.uriRouter.getAction(), dashMVC.uriRouter.getParams());
 }
 
-dashMVC.uriRouter.process = function(request) {
-    dashMVC.uriRouter.resolveAliases(request);
-    dashMVC.uriRouter.resolveScheme(request);
 
-    console.log(request, dashMVC.uriRouter.getController(), dashMVC.uriRouter.getAction(),
-        dashMVC.uriRouter.getParams());
-};
-
-dashMVC.uriRouter.resolveAliases = function(request) {
+/**
+ * Resolves aliases to real URI schemes.
+ * If the request matches any alias, this function resolves it to the original scheme.
+ * @private
+ * @param {dashMVC.request} request Request to look for an alias match.
+ */
+dashMVC.uriRouter.resolveAliases_ = function(request) {
     var response, scheme;
     goog.array.some(dashMVC.uriRouter.aliases, function(alias, i, arr) {
         if (response = request.path.match(alias.format)) {
@@ -37,29 +47,49 @@ dashMVC.uriRouter.resolveAliases = function(request) {
         }
         return false;
     });
-}
+};
 
-dashMVC.uriRouter.resolveScheme = function(request) {
+
+/**
+ * This function sets the current scheme and the related controllers, actions and parameters.
+ * @private
+ * @param {dashMVC.Request} request Request to be processed.
+ */
+dashMVC.uriRouter.process_ = function(request) {
     var fragments = goog.array.clone(request.fragments);
 
     dashMVC.uriRouter.currentScheme = dashMVC.uriRouter.schemes[fragments[0]] || dashMVC.uriRouter.schemes.def;
     dashMVC.uriRouter.setController_(fragments.shift());
     dashMVC.uriRouter.setAction_(fragments.shift());
     dashMVC.uriRouter.setParams_(fragments);
-}
+};
 
+/**
+ * Sets the current controller required by the request. If there are no such controllers, default controller is set.
+ * @private
+ * @param {string} controller Dummy parameter for controller name (This function already takes the controller name
+ *                            from the current scheme, but in order for fragments.shift() to work in
+ *                            @link{dashMVC.uriRouter.process_}, this function should receive a parameter.
+ */
 dashMVC.uriRouter.setController_ = function(controller) {
     dashMVC.uriRouter.controller_ = dashMVC.uriRouter.currentScheme.controller;
 };
 
+/**
+ * Sets the current action required by the request. If there are no such actions, default action is set.
+ * @private
+ * @param {string} action Action present on the scheme.
+ */
 dashMVC.uriRouter.setAction_ = function(action) {
     dashMVC.uriRouter.action_ = dashMVC.uriRouter.currentScheme.actions[action] ||
                                 dashMVC.uriRouter.schemes.def.actions.def;
-}
+};
 
 /**
- * sets the parameters. Notice that if there are odd number of parameters, an empty value is added to the end of
+ * Sets the parameters. Notice that if there are odd number of parameters, an empty value is added to the end of
  * the array for convenient operation of sending only the keys (where values are unimportant to the backend)
+ * @private
+ * @param {Array.<string>} paramsArray Array of parameters.
  */
 dashMVC.uriRouter.setParams_ = function(paramsArray) {
     var params, paramsArray = paramsArray || [];
@@ -74,24 +104,56 @@ dashMVC.uriRouter.setParams_ = function(paramsArray) {
     params = goog.object.create(paramsArray);
 
     dashMVC.uriRouter.params_ = params;
-}
+};
 
+
+/**
+ * Returns the active controller.
+ */
 dashMVC.uriRouter.getController = function() {
     return dashMVC.uriRouter.controller_;
-}
+};
 
+
+/**
+ * Returns the active action.
+ */
 dashMVC.uriRouter.getAction = function() {
     return dashMVC.uriRouter.action_;
-}
+};
 
+
+/**
+ * Returns the active parameters.
+ */
 dashMVC.uriRouter.getParams = function() {
     return dashMVC.uriRouter.params_;
-}
+};
 
+
+/**
+ * Adds a URI scheme to the router. This scheme will be tried upon each request.
+ * @param {Object} scheme Scheme to be added.
+ */
 dashMVC.uriRouter.addScheme = function(scheme) {
     dashMVC.uriRouter.schemes[scheme.name] = scheme;
-}
+};
 
+
+/**
+ * Returns a given URI scheme.
+ * @param {string} name Scheme name.
+ */
+dashMVC.uriRouter.getScheme = function(name) {
+    return dashMVC.uriRouter.schemes[name];
+};
+
+
+/**
+ * Adds an alias to the router. An alias points to a real scheme, but is a convenient method for the users to reach
+ * that scheme.
+ * @param {Object} alias Alias to be added.
+ */
 dashMVC.uriRouter.addAlias = function(alias) {
     var format = '^' + alias.format + '\/*$',
         fields = format.match(/(:\w+)/g);
@@ -107,7 +169,7 @@ dashMVC.uriRouter.addAlias = function(alias) {
     alias.format = new RegExp(format);
 
     dashMVC.uriRouter.aliases.push(alias);
-}
+};
 
 var defaultController = 'default c', defaultAction = 'default a';
 var controller1 = 'resolved c1', action1 = 'resolved a1', action2 = 'resolved a2',
@@ -122,10 +184,6 @@ dashMVC.uriRouter.schemes = {
         }
     }
 };
-
-dashMVC.uriRouter.getScheme = function(name) {
-    return dashMVC.uriRouter.schemes[name];
-}
 
 dashMVC.uriRouter.addScheme({
     name: 'controller1',

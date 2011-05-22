@@ -16,6 +16,8 @@ goog.require('dashMVC.uriRouter');
 goog.require('goog.History');
 goog.provide('dashMVC');
 
+
+
 dashMVC.history = new goog.History(false);
 
 dashMVC.history.callback = function(e) {
@@ -24,5 +26,3 @@ dashMVC.history.callback = function(e) {
 
 goog.events.listen(dashMVC.history, goog.history.EventType.NAVIGATE, dashMVC.history.callback);
 dashMVC.history.setEnabled(true);
-
-
