@@ -9,6 +9,13 @@ goog.require('goog.array');
 goog.require('goog.object');
 
 
+/**
+ * Varible to hold uri base path
+ *
+ * @private
+ */
+dashMVC.uriRouter.basePath_ = '/';
+
 
 /**
  * UriRouter singleton. It is responsible for routing the incoming request to appropriate controller and actions
@@ -18,13 +25,34 @@ goog.require('goog.object');
  * @param {string} uri The URI to parse.
  */
 dashMVC.uriRouter.init = function(uri) {
-    dashMVC.uriRouter.request = new dashMVC.Request(uri || window.location);
+    var basePath = dashMVC.uriRouter.getBasePath();
+    dashMVC.uriRouter.request = new dashMVC.Request(uri || window.location, basePath);
 
     dashMVC.uriRouter.resolveAliases_(dashMVC.uriRouter.request);
     dashMVC.uriRouter.process_(dashMVC.uriRouter.request);
 
     console.log(dashMVC.uriRouter.getController(), dashMVC.uriRouter.getAction(), dashMVC.uriRouter.getParams());
-}
+};
+
+
+/**
+ * Set base path 
+ *
+ * @param {string} path uri base path.
+ */
+dashMVC.uriRouter.setBasePath = function(path) {
+    path = path || '/';
+    dashMVC.uriRouter.basePath_ = path;
+};
+
+/**
+ * Return uri base path
+ *
+ * @return {string} uri base path.
+ */
+dashMVC.uriRouter.getBasePath = function() {
+    return dashMVC.uriRouter.basePath_;
+};
 
 
 /**

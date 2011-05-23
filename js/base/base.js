@@ -20,6 +20,11 @@ goog.provide('dashMVC');
 
 dashMVC.history = new goog.History(false);
 
+/**
+ * TODO: this path should be changed, or can be set from a parameter from server
+ */
+dashMVC.uriRouter.setBasePath('/github/dashMVC/');
+
 dashMVC.history.callback = function(e) {
     dashMVC.uriRouter.init();
 }
