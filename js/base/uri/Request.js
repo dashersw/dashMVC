@@ -3,7 +3,7 @@
 //
 // @author Armagan Amcalar <armagan@tart.com.tr>
 
-goog.provide('dashMVC.Request');
+goog.provide('dashMVC.uri.Request');
 goog.require('goog.Uri');
 
 
@@ -14,8 +14,8 @@ goog.require('goog.Uri');
  * @param uri
  * @param {string} basePath uri base path.
  */
-dashMVC.Request = function(uri, basePath) {
-    basePath = basePath || '/';
+dashMVC.uri.Request = function(uri) {
+    basePath = dashMVC.uri.router.getBasePath();
     var uri = new goog.Uri(uri);
 
     this.path = uri.getPath();
