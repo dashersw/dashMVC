@@ -12,7 +12,7 @@
 goog.require('dashMVC.Controller');
 goog.require('dashMVC.Model');
 goog.require('dashMVC.View');
-goog.require('dashMVC.uriRouter');
+goog.require('dashMVC.uri.router');
 goog.require('goog.History');
 goog.provide('dashMVC');
 
@@ -20,8 +20,13 @@ goog.provide('dashMVC');
 
 dashMVC.history = new goog.History(false);
 
+/**
+ * TODO: this path should be changed, or can be set from a parameter from server
+ */
+dashMVC.uri.router.setBasePath('/github/dashMVC/');
+
 dashMVC.history.callback = function(e) {
-    dashMVC.uriRouter.init();
+    dashMVC.uri.router.init();
 }
 
 goog.events.listen(dashMVC.history, goog.history.EventType.NAVIGATE, dashMVC.history.callback);
